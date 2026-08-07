@@ -31,7 +31,7 @@ pipeline {
                 SONAR_AUTH_TOKEN = credentials('sonarqube')
             }
             steps {
-                sh "cd app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
+                sh "cd app && mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
             }
         }
 
