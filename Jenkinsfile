@@ -7,16 +7,16 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/spring-boot-app:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "abelshanoj/spring-boot-app:${BUILD_NUMBER}"
         SONAR_URL = "http://sonarqube:9000"
-        GIT_REPO_NAME = "your-repo-name"
-        GIT_USER_NAME = "your-github-username"
+        GIT_REPO_NAME = "jenkins-sonarqube-argocd-project"
+        GIT_USER_NAME = "abelshanoj"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-github-username/your-repo-name.git'
+                git branch: 'main', url: 'https://github.com/abelshanoj/jenkins-sonarqube-argocd-project.git'
             }
         }
 
@@ -53,7 +53,7 @@ pipeline {
                     sh '''
                         git config user.email "jenkins@ci.local"
                         git config user.name "jenkins-ci"
-                        sed -i "s|your-dockerhub-username/spring-boot-app:.*|${DOCKER_IMAGE}|g" manifests/deployment.yml
+                        sed -i "s|abelshanoj/spring-boot-app:.*|${DOCKER_IMAGE}|g" manifests/deployment.yml
                         git add manifests/deployment.yml
                         git commit -m "Update image to ${BUILD_NUMBER} [ci skip]"
                         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
