@@ -1,11 +1,10 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9-eclipse-temurin-17'
-            args '--network devops -v /var/run/docker.sock:/var/run/docker.sock -u root'
-        }
-    }
-
+   agent {
+   	docker {
+        	image 'maven:3.9-eclipse-temurin-21'
+        	args '--network devops -v /var/run/docker.sock:/var/run/docker.sock -u root'
+    	}
+   }
     environment {
         DOCKER_IMAGE = "abelshanoj/spring-boot-app:${BUILD_NUMBER}"
         SONAR_URL = "http://sonarqube:9000"
