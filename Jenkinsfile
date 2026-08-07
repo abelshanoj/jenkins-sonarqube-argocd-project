@@ -1,22 +1,22 @@
 pipeline {
     agent {
         docker {
-            image 'abhishekf5/maven-abhishek-docker-agent:v1'
-            args '--network devops -v /var/run/docker.sock:/var/run/docker.sock'
+            image 'maven:3.9-eclipse-temurin-17'
+            args '--network devops -v /var/run/docker.sock:/var/run/docker.sock -u root'
         }
     }
 
     environment {
-        DOCKER_IMAGE = "abelshanoj/spring-boot-app:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "your-dockerhub-username/spring-boot-app:${BUILD_NUMBER}"
         SONAR_URL = "http://sonarqube:9000"
-        GIT_REPO_NAME = "jenkins-sonarqube-argocd-project"
-        GIT_USER_NAME = "abelshanoj"
+        GIT_REPO_NAME = "your-repo-name"
+        GIT_USER_NAME = "your-github-username"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/abelshanoj/jenkins-sonarqube-argocd-project.git'
+                git branch: 'main', url: 'https://github.com/your-github-username/your-repo-name.git'
             }
         }
 
@@ -31,12 +31,13 @@ pipeline {
                 SONAR_AUTH_TOKEN = credentials('sonarqube')
             }
             steps {
-            	sh "cd app && mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"    
-	    }
+                sh "cd app && mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
+            }
         }
 
         stage('Build and Push Docker Image') {
             steps {
+                sh 'apt-get update && apt-get install -y docker.io'
                 script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
                         sh "docker build -t ${DOCKER_IMAGE} -f app/Dockerfile app"
